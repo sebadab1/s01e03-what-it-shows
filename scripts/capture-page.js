@@ -50,6 +50,10 @@ try {
   await expect(page.locator('a[href="https://github.com/sebadab1/s01e03-what-it-shows/issues/1"]')).toHaveCount(1);
   await expect(page.locator('a[href="https://github.com/sebadab1/s01e03-what-it-shows/issues/2"]')).toHaveCount(1);
   await expect(page.locator('.stamp.missing')).toHaveCount(0);
+  await expect(page.locator('.status')).toHaveText('closed');
+  await expect(page.locator('main')).toContainText('Parser — FIXED');
+  await expect(page.locator('main')).toContainText(/Hint — WON['’]T FIX/);
+  await expect(page.locator('main')).toContainText('booking-v3 form retired');
   assert.deepEqual(errors, [], 'The rendered page must not raise browser errors.');
 
   await mkdir(output, { recursive: true });
@@ -74,6 +78,9 @@ try {
   await expect(page.locator('.stamp')).toHaveText(`desk ref ${ref}`);
   await expect(page.locator('table tbody tr')).toHaveCount(2);
   await expect(page.locator('link[rel="stylesheet"], script')).toHaveCount(0);
+  await expect(page.locator('.status')).toHaveText('closed');
+  await expect(page.locator('main')).toContainText('Parser — FIXED');
+  await expect(page.locator('main')).toContainText(/Hint — WON['’]T FIX/);
   assert.deepEqual(errors, []);
   console.log(`Verified the built page and standalone HTML: 412 reports, parser 379, hint 33, desk ref ${ref}.`);
   console.log('Saved rendered/4471-causes.html and rendered/4471-causes.png.');

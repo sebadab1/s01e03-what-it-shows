@@ -53,3 +53,14 @@ test('the page has one signature and uses the computed table and stamp', async (
   assert.doesNotMatch(page, /const signature\s*=/);
   assert.match(deskRef('sebadab1'), /^DR-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
 });
+
+test('the page distinguishes the reported fix from the retired form', async () => {
+  const page = await readFile(new URL('../src/routes/kb/incidents/4471-causes/+page.svx', import.meta.url), 'utf8');
+  assert.match(page, /^status: closed$/m);
+  assert.match(page, /Parser — FIXED/);
+  assert.match(page, /fix\(dates\): parse dd\/mm for eu locales/);
+  assert.match(page, /Hint — WON'T FIX/);
+  assert.match(page, /booking-v3 form retired/);
+  assert.match(page, /closed as not planned, not as a shipped hint fix/);
+  assert.match(page, /not production changes made in this repo/);
+});
