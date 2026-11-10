@@ -1,0 +1,45 @@
+---
+layout: runbook
+title: '#4471 · two causes behind wrong dates'
+owner: support desk
+status: known
+reviewed: 2026-11-10
+signature: sebadab1
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const signature = 'sebadab1';
+</script>
+
+Ticket #4471 combines reports about dates shown on the wrong day. The export has overlapping
+rows, so counts below deduplicate by report ID before grouping.
+
+## Problems
+
+The reports split into two causes. The intake tag is only a guess; the tenant locale, booking
+form, and channel determine the cause.
+
+### Shared parser reads dates month first
+
+For tenants whose locale writes the day before the month, the shared parser flips day and month.
+This cause appears across app, email, and booking-v2 form reports. Open one parser issue for all
+reports in this group.
+
+### booking-v3 hint conflicts with day-first locales
+
+The booking-v3 form tells people to enter month first, while its tenant locale reads dates day
+first. This separate form-hint problem affects booking-v3 form reports only. Open a second issue
+for this group; do not merge it with the shared parser issue.
+
+## Count and evidence
+
+<CauseTable ticket={4471} />
+
+The table counts unique reports by the tenant and form rules in `src/lib/kb/causes.ts`. The five
+one-day-move reports in `desk-notes.json` remain included in their parser group; they are not a
+third cause. Intake tags can disagree with the cause, so they do not determine the issue split.
+
+<RenderStamp {signature} />
