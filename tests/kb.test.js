@@ -47,11 +47,13 @@ test('desk-noted one-day moves remain included, not double-counted', () => {
 
 test('the page has one signature and uses the computed table and stamp', async () => {
   const page = await readFile(new URL('../src/routes/kb/incidents/4471-causes/+page.svx', import.meta.url), 'utf8');
-  assert.match(page, /^signature: sebadab1$/m);
+  const signature = page.match(/^signature: (\S+)$/m)?.[1];
+  assert.match(signature, /^v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/);
+  assert.equal((page.match(/^signature:/gm) ?? []).length, 1);
   assert.match(page, /<CauseTable ticket=\{4471\} \/>/);
   assert.match(page.trimEnd(), /<RenderStamp \{signature\} \/>$/);
   assert.doesNotMatch(page, /const signature\s*=/);
-  assert.match(deskRef('sebadab1'), /^DR-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
+  assert.match(deskRef(signature), /^DR-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
 });
 
 test('the page distinguishes the reported fix from the retired form', async () => {

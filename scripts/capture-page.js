@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { chromium, expect } from '@playwright/test';
 import { deskRef } from '../src/lib/kb/desk-ref.ts';
@@ -8,6 +8,9 @@ import { deskRef } from '../src/lib/kb/desk-ref.ts';
 const base = 'http://127.0.0.1:4173';
 const route = '/kb/incidents/4471-causes/';
 const output = new URL('../rendered/', import.meta.url);
+const source = await readFile(new URL('../src/routes/kb/incidents/4471-causes/+page.svx', import.meta.url), 'utf8');
+const signature = source.match(/^signature: (\S+)$/m)?.[1];
+assert.ok(signature, 'The source page must carry the course-issued signature.');
 const server = spawn(process.execPath, [
   'node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', '4173', '--strictPort',
 ], { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -45,7 +48,7 @@ try {
   await expect(rows.nth(0).locator('td').nth(1)).toHaveText('379');
   await expect(rows.nth(1).locator('td').nth(0)).toHaveText('hint');
   await expect(rows.nth(1).locator('td').nth(1)).toHaveText('33');
-  const ref = deskRef('sebadab1');
+  const ref = deskRef(signature);
   await expect(page.locator('.stamp')).toHaveText(`desk ref ${ref}`);
   await expect(page.locator('a[href="https://github.com/sebadab1/s01e03-what-it-shows/issues/1"]')).toHaveCount(1);
   await expect(page.locator('a[href="https://github.com/sebadab1/s01e03-what-it-shows/issues/2"]')).toHaveCount(1);
