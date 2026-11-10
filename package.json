@@ -1,0 +1,26 @@
+{
+  "name": "support-kb-4471",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.js",
+    "capture": "node scripts/capture-page.js"
+  },
+  "devDependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@playwright/test": "1.65.0",
+    "@sveltejs/adapter-static": "4.0.1",
+    "@sveltejs/kit": "3.2.0",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "mdsvex": "0.12.8",
+    "svelte": "5.57.3",
+    "typescript": "^6.0.0",
+    "vite": "8.3.7"
+  }
+}

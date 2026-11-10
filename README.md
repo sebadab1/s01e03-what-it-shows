@@ -34,3 +34,42 @@ Support desk. Decision records: whoever signed them.
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
+
+## Reproduce the S01E03 page
+
+Use Node.js 24 or newer (Node.js 26 was used for this build) and npm.
+
+```sh
+npm ci
+npm test
+npm run build
+npm exec playwright install chromium
+npm run capture
+```
+
+On a minimal Linux machine, Chromium also needs its platform libraries; consult
+`npm exec playwright install-deps -- --help` before installing system packages.
+If Chromium is already installed, set `KB_BROWSER_EXECUTABLE` to its full executable path
+instead of downloading another browser. Libraries installed in a private directory may
+require `LD_LIBRARY_PATH` when running the capture.
+
+`npm run capture` starts the built site on `127.0.0.1:4173`, checks the computed report
+counts, issue links, browser errors, and the signature stamp, and writes:
+
+- [`rendered/4471-causes.html`](rendered/4471-causes.html): the actual page with styles
+  inlined, readable locally without a server or JavaScript;
+- [`rendered/4471-causes.png`](rendered/4471-causes.png): the full-page Chromium screenshot.
+
+The source is [`src/routes/kb/incidents/4471-causes/+page.svx`](src/routes/kb/incidents/4471-causes/+page.svx).
+Open the downloaded HTML in a browser, or use `npm run preview -- --host 127.0.0.1` to
+inspect the complete KB at `/kb/`. The build uses the supplied components and classifier;
+it does not replace their output with a manually written table. The original export and
+accepted decision 0001 remain unchanged.
+
+### Dependency audit
+
+The initial dependency audit reports a low-severity `deepmerge` advisory in the
+Svelte build-tool dependency tree (including its dependent packages). No patched
+`deepmerge` release was available when this lockfile was generated. This project
+only builds the checked-in configuration locally and publishes a static page;
+do not expose its development server to untrusted users or use untrusted config.
